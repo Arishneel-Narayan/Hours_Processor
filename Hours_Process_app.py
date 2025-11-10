@@ -169,10 +169,6 @@ if uploaded_files:
                    va="center", ha=ha_val, fontsize=9)
 
         st.pyplot(fig)
-
-       # --- Display Plot (This line should already be there) ---
-        st.pyplot(fig)
-
         # ----------------------------
         # DOWNLOAD SECTION (REVISED)
         # ----------------------------
