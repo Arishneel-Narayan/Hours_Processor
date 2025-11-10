@@ -170,19 +170,45 @@ if uploaded_files:
 
         st.pyplot(fig)
 
-        # --- Download Section ---
-        st.subheader("Download Summary")
-        # Create an in-memory Excel file
-        buffer = io.BytesIO()
-        with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
+       # --- Display Plot (This line should already be there) ---
+        st.pyplot(fig)
+
+        # ----------------------------
+        # DOWNLOAD SECTION (REVISED)
+        # ----------------------------
+        st.subheader("Download Outputs")
+
+        # 1. Prepare Excel download
+        excel_buffer = io.BytesIO()
+        with pd.ExcelWriter(excel_buffer, engine='xlsxwriter') as writer:
             summary.to_excel(writer, index=False, sheet_name='Summary')
         
-        st.download_button(
-            label="📥 Download Summary Excel",
-            data=buffer.getvalue(),
-            file_name="technician_summary.xlsx",
-            mime="application/vnd.ms-excel"
-        )
+        # 2. Prepare Plot download
+        img_buffer = io.BytesIO()
+        # Save the figure to the in-memory buffer
+        fig.savefig(img_buffer, format="png", dpi=150, bbox_inches="tight")
+
+        # 3. Create columns for the buttons
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.download_button(
+                label="📥 Download Summary Excel",
+                data=excel_buffer.getvalue(),
+                file_name="technician_summary.xlsx",
+                mime="application/vnd.ms-excel",
+                use_container_width=True
+            )
+        
+        with col2:
+            st.download_button(
+                label="🖼️ Download Graph PNG",
+                data=img_buffer.getvalue(),
+                file_name=f"{chart_title.replace(' ', '_').lower()}.png",
+                mime="image/png",
+                use_container_width=True
+            )
+
     else:
         st.info("Uploaded files contained no valid data for processing.")
 else:
